@@ -990,54 +990,55 @@ menuArtistTextInput.addEventListener('input', e => {
   drawArtistContour();
 });
 
-async function exportHighRes() {
-    const exportButton = document.getElementById('exportButton');
-    exportButton.innerText = "Exporting...";
-    exportButton.style.opacity = "0.5";
+// === HIGH-RES EXPORT (300 DPI, 51.1×76.1cm) ===
+// === VERBETERDE HIGH-RES EXPORT ===
+// PNG Export (300 DPI - 51.1 x 76.1 cm)
+const exportHighResBtn = document.getElementById('exportHighResBtn');
+if (exportHighResBtn) {
+  exportHighResBtn.addEventListener('click', async () => {
+    // Vraag de gebruiker om een naam 
+    const baseName = prompt("Geef een naam op voor je poster:", "mijn_poster");
+    
+    // Als de gebruiker op 'annuleren' klikt, stop de functie 
+    if (baseName === null) return;
 
     const canvasNode = document.getElementById('canvas');
-    
-    // De resolutie die je wilt (A3 kwaliteit op 300 DPI)
-    const targetWidth = 6035;
-    const targetHeight = 8940;
-    const originalWidth = canvasNode.offsetWidth;
-    const targetPixelRatio = targetWidth / originalWidth;
+    const topMenu = document.getElementById('topMenu');
 
-    // Filter om te voorkomen dat het menu zelf wordt mee-geëxporteerd
-    const filter = (node) => {
-        return (node.id !== 'menu' && node.id !== 'exportButton');
-    };
+    exportHighResBtn.innerText = "Processing...";
+    exportHighResBtn.style.opacity = "0.5";
+    topMenu.style.display = 'none';
 
     try {
-        // Wacht een fractie van een seconde zodat alle stijlen stabiel zijn
-        await document.fonts.ready;
+      const targetPixelRatio = EXPORT_WIDTH / 600;
+      const dataUrl = await htmlToImage.toPng(canvasNode, {
+        width: 600,
+        height: 894,
+        pixelRatio: targetPixelRatio,
+        backgroundColor: menuColor1.value,
+        cacheBust: true,
+        style: {
+          transform: 'none',
+          left: '0',
+          top: '0',
+          position: 'relative'
+        }
+      });
 
-        const dataUrl = await htmlToImage.toPng(canvasNode, {
-            width: targetWidth,
-            height: targetHeight,
-            style: {
-                transform: `scale(${targetPixelRatio})`,
-                transformOrigin: 'top left',
-                width: `${canvasNode.offsetWidth}px`,
-                height: `${canvasNode.offsetHeight}px`
-            },
-            pixelRatio: 1, // We regelen de schaal zelf via transform
-            backgroundColor: menuColor1.value,
-            filter: filter,
-            cacheBust: true, // Cruciaal voor GitHub: voorkomt oude plaatjes in de cache
-        });
-
-        const link = document.createElement('a');
-        link.download = `poster-${menuNumberInputText.value || 'design'}.png`;
-        link.href = dataUrl;
-        link.click();
+      const link = document.createElement('a');
+      // Gebruik de opgegeven naam of een standaardnaam 
+      const fileName = baseName.trim() || `poster_${Date.now()}`;
+      link.download = `${fileName}.png`;
+      link.href = dataUrl;
+      link.click();
 
     } catch (error) {
-        console.error('Export failed:', error);
-        alert("Export mislukt. Probeer een screenshot of check de console.");
+      console.error('Export fout:', error);
+      alert('PNG Export mislukt: ' + error.message);
     } finally {
-        exportButton.innerText = "Export PNG (A3)";
-        exportButton.style.opacity = "1";
+      topMenu.style.display = 'flex';
+      exportHighResBtn.innerText = "Export as PNG";
+      exportHighResBtn.style.opacity = "1";
     }
   });
 }
@@ -1392,3 +1393,106 @@ updateArtistBox();
 drawTextBox1Contour();
 drawTextBox2Contour();
 drawDecorativeStripes();
+
+// === GEAVANCEERDE RANDOMIZE FUNCTIONALITEIT ===
+const randomizeBtn = document.getElementById('randomizeBtn');
+
+if (randomizeBtn) {
+  randomizeBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+
+    // 1. DYNAMISCHE KLEUREN GENERATOR (Miljoenen opties)
+    const getRandomHex = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+    
+    // We genereren een basiskleur en passen de helderheid aan voor de accenten
+    const baseHue = Math.floor(Math.random() * 360);
+    const color1 = `hsl(${baseHue}, ${40 + Math.random() * 40}%, ${20 + Math.random() * 30}%)`; // Donkerder/Verzadigd
+    const color2 = `hsl(${(baseHue + 180) % 360}, 80%, 50%)`; // Complementair voor contrast
+    const color3 = `hsl(${(baseHue + 40) % 360}, 90%, 60%)`;  // Analoog/Accent
+
+    // Functie om HSL naar HEX om te zetten (nodig voor de input type="color")
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = s * Math.min(l, 1 - l) / 100;
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    // Of gebruik puur willekeurige HEX voor maximale chaos:
+    menuColor1.value = getRandomHex();
+    menuColor2.value = getRandomHex();
+    menuColor3.value = getRandomHex();
+
+    const setRand = (input, min, max) => {
+      input.value = Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    // 2. CENTRALE ELEMENTEN (Altijd gecentreerd)
+    setRand(menuFontSize, 350, 800);
+    setRand(menuPosX, 48, 52); // Zeer strakke centrering voor professionele look
+    setRand(menuPosY, 35, 45); 
+    
+    const newNum = Math.floor(Math.random() * 10).toString();
+    menuNumberInputText.value = newNum;
+    shape.textContent = newNum;
+    shape.style.left = menuPosX.value + '%';
+    shape.style.top = menuPosY.value + '%';
+
+    // 3. TEKSTVAKKEN (Gecentreerd t.o.v. cijfer)
+    setRand(menuBox1Width, 180, 400);
+    setRand(menuBox2Width, 180, 400);
+    setRand(menuBox1Height, 40, 90);
+    setRand(menuBox2Height, 40, 90);
+    setRand(menuBoxGap, 5, 35);
+    
+    // Zet tekstpositie in de boxen vast op het midden
+    menuBox1TextX.value = 50; menuBox1TextY.value = 50;
+    menuBox2TextX.value = 50; menuBox2TextY.value = 50;
+    
+    // Willekeurige scherpe hoeken
+    setRand(menuBox1Corner1Y, 0, 50);
+    setRand(menuBox1Corner2X, 60, 100);
+    setRand(menuBox2Corner1X, 0, 40);
+    setRand(menuBox2Corner2Y, 50, 100);
+
+    // 4. TICKET, INFO & ARTIST (Onderste helft dynamiek)
+    setRand(menuTicketHeight, 50, 120);
+    setRand(menuTicketWidth, 45, 90);
+    setRand(menuTicketPosY, 62, 78); 
+    setRand(menuTicketPosX, 45, 55);
+    setRand(menuTicketInfoFontSize, 10, 22);
+    setRand(menuTicketPriceFontSize, 14, 30);
+
+    setRand(menuExtraInfoFontSize, 8, 16);
+    setRand(menuExtraInfoDistance, 1, 10);
+    
+    setRand(menuArtistHeight, 30, 60);
+    setRand(menuArtistWidth, 200, 450);
+    setRand(menuArtistFontSize, 12, 24);
+    setRand(menuArtistDistance, 3, 15);
+    setRand(menuArtistCorner1X, 0, 30);
+    setRand(menuArtistCorner2Y, 50, 95);
+
+    // 5. DECORATIE & LIJNEN
+    setRand(menuTrapWidth, 30, 110);
+    setRand(menuTrap1PosX, -60, 60);
+    setRand(menuTrap2PosX, -60, 60);
+    setRand(menuTrapFontSize, 12, 28);
+    setRand(menuStrokeWidth, 1, 10);
+    setRand(menuCornerShift, 0, 35);
+    setRand(menuCorner4X, 40, 95);
+    setRand(menuCorner5Y, 5, 70);
+
+    // 6. UPDATE ALLES
+    updateShapeStyle();
+    updatePentagon();
+    updateTextBoxes();
+    updateTicketSection();
+    updateExtraInfo();
+    updateArtistBox();
+  });
+}
