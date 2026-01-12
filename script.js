@@ -990,55 +990,54 @@ menuArtistTextInput.addEventListener('input', e => {
   drawArtistContour();
 });
 
-// === HIGH-RES EXPORT (300 DPI, 51.1×76.1cm) ===
-// === VERBETERDE HIGH-RES EXPORT ===
-// PNG Export (300 DPI - 51.1 x 76.1 cm)
-const exportHighResBtn = document.getElementById('exportHighResBtn');
-if (exportHighResBtn) {
-  exportHighResBtn.addEventListener('click', async () => {
-    // Vraag de gebruiker om een naam 
-    const baseName = prompt("Geef een naam op voor je poster:", "mijn_poster");
-    
-    // Als de gebruiker op 'annuleren' klikt, stop de functie 
-    if (baseName === null) return;
+async function exportHighRes() {
+    const exportButton = document.getElementById('exportButton');
+    exportButton.innerText = "Exporting...";
+    exportButton.style.opacity = "0.5";
 
     const canvasNode = document.getElementById('canvas');
-    const topMenu = document.getElementById('topMenu');
+    
+    // De resolutie die je wilt (A3 kwaliteit op 300 DPI)
+    const targetWidth = 6035;
+    const targetHeight = 8940;
+    const originalWidth = canvasNode.offsetWidth;
+    const targetPixelRatio = targetWidth / originalWidth;
 
-    exportHighResBtn.innerText = "Processing...";
-    exportHighResBtn.style.opacity = "0.5";
-    topMenu.style.display = 'none';
+    // Filter om te voorkomen dat het menu zelf wordt mee-geëxporteerd
+    const filter = (node) => {
+        return (node.id !== 'menu' && node.id !== 'exportButton');
+    };
 
     try {
-      const targetPixelRatio = EXPORT_WIDTH / 600;
-      const dataUrl = await htmlToImage.toPng(canvasNode, {
-        width: 600,
-        height: 894,
-        pixelRatio: targetPixelRatio,
-        backgroundColor: menuColor1.value,
-        cacheBust: true,
-        style: {
-          transform: 'none',
-          left: '0',
-          top: '0',
-          position: 'relative'
-        }
-      });
+        // Wacht een fractie van een seconde zodat alle stijlen stabiel zijn
+        await document.fonts.ready;
 
-      const link = document.createElement('a');
-      // Gebruik de opgegeven naam of een standaardnaam 
-      const fileName = baseName.trim() || `poster_${Date.now()}`;
-      link.download = `${fileName}.png`;
-      link.href = dataUrl;
-      link.click();
+        const dataUrl = await htmlToImage.toPng(canvasNode, {
+            width: targetWidth,
+            height: targetHeight,
+            style: {
+                transform: `scale(${targetPixelRatio})`,
+                transformOrigin: 'top left',
+                width: `${canvasNode.offsetWidth}px`,
+                height: `${canvasNode.offsetHeight}px`
+            },
+            pixelRatio: 1, // We regelen de schaal zelf via transform
+            backgroundColor: menuColor1.value,
+            filter: filter,
+            cacheBust: true, // Cruciaal voor GitHub: voorkomt oude plaatjes in de cache
+        });
+
+        const link = document.createElement('a');
+        link.download = `poster-${menuNumberInputText.value || 'design'}.png`;
+        link.href = dataUrl;
+        link.click();
 
     } catch (error) {
-      console.error('Export fout:', error);
-      alert('PNG Export mislukt: ' + error.message);
+        console.error('Export failed:', error);
+        alert("Export mislukt. Probeer een screenshot of check de console.");
     } finally {
-      topMenu.style.display = 'flex';
-      exportHighResBtn.innerText = "Export as PNG";
-      exportHighResBtn.style.opacity = "1";
+        exportButton.innerText = "Export PNG (A3)";
+        exportButton.style.opacity = "1";
     }
   });
 }
