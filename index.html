@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poster Maker</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div id="topMenu">
+  <div class="menuItem" id="variablesItem">
+    Variables
+    <div class="submenu">
+      <div class="submenuItem" id="exportItem">
+        Export
+        <div class="submenuContent">
+          <button id="exportHighResBtn" style="padding: 8px 16px; cursor: pointer; background: #28a745; color: white; border: 2px solid #28a745; font-family: 'Bebas Neue', sans-serif; font-size: 16px; margin-top: 5px; margin-bottom: 5px; font-weight: bold;">Export as PNG</button>
+        </div>
+      </div>
+      <div class="submenuItem" id="colorsItem">Colors
+        <div class="submenuContent">
+          <label>Primary Color</label><input type="color" id="menuColor1" value="#0000FF">
+          <label>Stroke Color</label><input type="color" id="menuColor2" value="#FF0000">
+          <label>Accent Color</label><input type="color" id="menuColor3" value="#FFFF00">
+        </div>
+      </div>
+      <div class="submenuItem" id="borderItem">Border Frame
+        <div class="submenuContent">
+          <label>Frame Thickness</label><input type="range" id="menuCornerShift" min="0" max="50" value="10">
+          <label>Cut Corner 1</label><input type="range" id="menuCorner4X" min="0" max="100" value="70">
+          <label>Cut Corner 2</label><input type="range" id="menuCorner5Y" min="0" max="100" value="15">
+        </div>
+      </div>
+      <div class="submenuItem" id="strokeItem">Stroke Lines
+        <div class="submenuContent">
+          <label>Stroke Width</label><input type="range" id="menuStrokeWidth" min="0" max="20" value="5">
+        </div>
+      </div>
+      <div class="submenuItem" id="numberItem">Center Number
+        <div class="submenuContent">
+          <label>Size</label><input type="range" id="menuFontSize" min="10" max="2000" value="500">
+          <label>Position X</label><input type="range" id="menuPosX" min="0" max="100" value="50">
+          <label>Position Y</label><input type="range" id="menuPosY" min="0" max="100" value="40">
+        </div>
+      </div>
+      <div class="submenuItem" id="textBox1Item">Top Text Box
+        <div class="submenuContent">
+          <label>Text Size</label><input type="range" id="menuBox1FontSize" min="10" max="80" value="24">
+          <label>Width</label><input type="range" id="menuBox1Width" min="100" max="800" value="267">
+          <label>Height</label><input type="range" id="menuBox1Height" min="30" max="200" value="60">
+          <label>Text Position X</label><input type="range" id="menuBox1TextX" min="0" max="100" value="50">
+          <label>Text Position Y</label><input type="range" id="menuBox1TextY" min="0" max="100" value="50">
+          <label>Gap (spacing)</label><input type="range" id="menuBoxGap" min="0" max="100" value="30">
+          <label>Corner 1 Y</label><input type="range" id="menuBox1Corner1Y" min="0" max="100" value="25">
+          <label>Corner 2 X</label><input type="range" id="menuBox1Corner2X" min="0" max="100" value="85">
+        </div>
+      </div>
+      <div class="submenuItem" id="textBox2Item">Bottom Text Box
+        <div class="submenuContent">
+          <label>Text Size</label><input type="range" id="menuBox2FontSize" min="10" max="80" value="24">
+          <label>Width</label><input type="range" id="menuBox2Width" min="100" max="800" value="267">
+          <label>Height</label><input type="range" id="menuBox2Height" min="30" max="200" value="60">
+          <label>Text Position X</label><input type="range" id="menuBox2TextX" min="0" max="100" value="50">
+          <label>Text Position Y</label><input type="range" id="menuBox2TextY" min="0" max="100" value="50">
+          <label>Corner 1 X</label><input type="range" id="menuBox2Corner1X" min="0" max="100" value="15">
+          <label>Corner 2 Y</label><input type="range" id="menuBox2Corner2Y" min="0" max="100" value="75">
+        </div>
+      </div>
+      <div class="submenuItem" id="stripesItem">Diagonal Stripes
+        <div class="submenuContent">
+          <label>Stripe Width</label><input type="range" id="menuTrapWidth" min="20" max="150" value="60">
+          <label>Stripe 2 Length</label><input type="range" id="menuTrapLength2" min="500" max="2000" value="1080">
+          <label>Stripe 1 Length</label><input type="range" id="menuTrapLength1" min="500" max="2500" value="1680">
+          <label>Stripe 1 Position X</label><input type="range" id="menuTrap1PosX" min="-200" max="200" value="0">
+          <label>Stripe 2 Position X</label><input type="range" id="menuTrap2PosX" min="-200" max="200" value="0">
+          <label>Stripe 1 Text Position</label><input type="range" id="menuTrap1TextPos" min="0" max="100" value="7">
+          <label>Stripe 2 Text Position</label><input type="range" id="menuTrap2TextPos" min="0" max="100" value="7">
+          <label>Text Size</label><input type="range" id="menuTrapFontSize" min="10" max="80" value="17">
+        </div>
+      </div>
+      <div class="submenuItem" id="ticketItem">Ticket Info Box
+        <div class="submenuContent">
+          <label>Info Text Size</label><input type="range" id="menuTicketInfoFontSize" min="8" max="50" value="16">
+          <label>Price Text Size</label><input type="range" id="menuTicketPriceFontSize" min="10" max="80" value="18">
+          <label>Box Height</label><input type="range" id="menuTicketHeight" min="40" max="200" value="80">
+          <label>Box Width</label><input type="range" id="menuTicketWidth" min="50" max="100" value="55">
+          <label>Position X</label><input type="range" id="menuTicketPosX" min="0" max="100" value="50">
+          <label>Position Y</label><input type="range" id="menuTicketPosY" min="50" max="100" value="68">
+        </div>
+      </div>
+      <div class="submenuItem" id="artistItem">Additional Artist Box
+        <div class="submenuContent">
+          <label>Text Size</label><input type="range" id="menuArtistFontSize" min="10" max="30" value="16">
+          <label>Width</label><input type="range" id="menuArtistWidth" min="200" max="500" value="300">
+          <label>Height</label><input type="range" id="menuArtistHeight" min="30" max="80" value="40">
+          <label>Position X</label><input type="range" id="menuArtistPosX" min="0" max="100" value="50">
+          <label>Distance Below Extra Info</label><input type="range" id="menuArtistDistance" min="4" max="20" value="5">
+          <label>Corner 1 X</label><input type="range" id="menuArtistCorner1X" min="0" max="100" value="15">
+          <label>Corner 2 Y</label><input type="range" id="menuArtistCorner2Y" min="0" max="100" value="75">
+        </div>
+      </div>
+      <div class="submenuItem" id="extraInfoItem">Extra Ticket Info
+        <div class="submenuContent">
+          <label>Text Size</label><input type="range" id="menuExtraInfoFontSize" min="8" max="20" value="10">
+          <label>Position X</label><input type="range" id="menuExtraInfoX" min="0" max="100" value="50">
+          <label>Distance Below Ticket</label><input type="range" id="menuExtraInfoDistance" min="2" max="20" value="3">
+        </div>
+      </div>
+      <div class="submenuItem" id="textItem">Text Content
+        <div class="submenuContent">
+          <label>Center Number</label><input type="text" id="menuNumberInputText" value="2" maxlength="2">
+          <label>Top Text Box</label><input type="text" id="menuBox1TextInput" value="A BAND">
+          <label>Bottom Text Box</label><input type="text" id="menuBox2TextInput" value="A BAND">
+          <label>Stripe 1 Text</label><input type="text" id="menuTrapText1Input" value="IN KAPITALEN">
+          <label>Stripe 2 Text</label><input type="text" id="menuTrapText2Input" value="TEKST">
+          <label>Date</label><input type="text" id="menuTicketDateInput" value="DATE">
+          <label>Location</label><input type="text" id="menuTicketLocationInput" value="LOCATION">
+          <label>Price</label><input type="text" id="menuTicketPriceInput" value="PRICE">
+          <label>Opening Hour</label><input type="text" id="menuTicketOpeningInput" value="OPENING HOUR">
+          <label>Closing Hour</label><input type="text" id="menuTicketClosingInput" value="CLOSING TIME">
+          <label>Extra Ticket Info</label><input type="text" id="menuExtraInfoTextInput" value="ADDITIONAL TICKET INFORMATION">
+          <label>Additional Artist</label><input type="text" id="menuArtistTextInput" value="ADDITIONAL ARTIST">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="canvasContainer">
+  <div id="canvasWrapper">
+    <div id="canvas">
+      <svg id="innerPentagonSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+        <polygon id="innerPentagonPath" fill="white" stroke="none"/>
+      </svg>
+      <canvas id="lineOverlay"></canvas>
+      <div id="shape" class="shape">2</div>
+
+      <div class="textBoxWrapper">
+        <svg class="textBoxSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+          <defs>
+            <clipPath id="textBox1Clip">
+              <polygon id="textBox1ClipPath"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <canvas id="textBox1Canvas"></canvas>
+        <div class="textBox" id="textBox1" style="clip-path: url(#textBox1Clip);">A BAND</div>
+      </div>
+
+      <div class="textBoxWrapper2">
+        <svg class="textBoxSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+          <defs>
+            <clipPath id="textBox2Clip">
+              <polygon id="textBox2ClipPath"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <canvas id="textBox2Canvas"></canvas>
+        <div id="textBox2" style="clip-path: url(#textBox2Clip);">A BAND</div>
+      </div>
+      
+      <div class="decorativeStripes" id="decorativeStripes">
+        <canvas class="stripe" id="stripe1"></canvas>
+        <canvas class="stripe" id="stripe2"></canvas>
+      </div>
+      
+      <div class="ticketSection" id="ticketSection">
+        <svg class="ticketBoxSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+          <rect id="ticketBoxBg" fill="white" stroke-width="3"/>
+          <circle id="ticketCircleBg" fill="white" stroke-width="3"/>
+        </svg>
+        <div class="ticketBox" id="ticketBox" style="border: none; background: transparent;">
+          <div class="ticketLeft">
+            <div id="ticketDate">DATE</div>
+            <div id="ticketLocation">LOCATION</div>
+          </div>
+          <div class="ticketCenter" id="ticketCenter" style="border: none; background: transparent;">PRICE</div>
+          <div class="ticketRight">
+            <div id="ticketOpening">OPENING HOUR</div>
+            <div id="ticketClosing">CLOSING TIME</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="extraInfo" id="extraInfo">ADDITIONAL TICKET INFORMATION</div>
+      
+      <div class="artistSection" id="artistSection">
+        <svg class="artistBoxSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+          <defs>
+            <clipPath id="artistBoxClip">
+              <polygon id="artistBoxClipPath"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <canvas class="artistCanvas" id="artistCanvas"></canvas>
+        <div class="artistBox" id="artistBox" style="clip-path: url(#artistBoxClip);">ADDITIONAL ARTIST</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
