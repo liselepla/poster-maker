@@ -368,3 +368,8 @@ body {
       pointer-events: none;
       z-index: 2;
     }
+#canvas {
+    background-color: white; /* Of de kleur van je menuColor1 */
+    overflow: hidden;        /* Zorgt dat uitstekende lijnen de export niet breken */
+    position: relative;
+}
