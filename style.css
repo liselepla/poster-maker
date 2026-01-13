@@ -379,3 +379,52 @@ body {
 #exportHighResBtn:hover {
   opacity: 0.8;
 }
+
+
+/* Algemene styling voor de track (het lijntje) */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+/* De track (het balkje) */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 2px;
+  cursor: pointer;
+  background: #000;
+}
+
+/* De thumb (het knopje) - Chrome, Safari, Edge, Opera */
+input[type="range"]::-webkit-slider-thumb {
+  height: 12px;
+  width: 12px;
+  background: #000;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px; /* Centreert het vierkantje op de lijn */
+  border-radius: 0; /* Maakt het een vierkantje */
+}
+
+/* De thumb - Firefox */
+input[type="range"]::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  background: #000;
+  cursor: pointer;
+  border-radius: 0; /* Maakt het een vierkantje */
+  border: none;
+}
+
+/* De track - Firefox */
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 2px;
+  cursor: pointer;
+  background: #000;
+}
