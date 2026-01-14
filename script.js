@@ -266,7 +266,7 @@ function updateArtistBox() {
   
   // Bereken maximale tekstgrootte op basis van kaderhoogte
   // Max 60% van de kaderhoogte (enkele regel tekst)
-  const maxArtistFontSize = artistHeight * 0.6;
+  const maxArtistFontSize = artistHeight * 1;
   
   // Gebruik de kleinste van slider waarde of maximum
   const artistFontSize = Math.min(artistFontSizeSlider, maxArtistFontSize);
